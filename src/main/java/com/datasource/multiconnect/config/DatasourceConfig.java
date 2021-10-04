@@ -26,7 +26,6 @@ public class DatasourceConfig {
 	}
 	
 	@Bean(name = "datasourcePrimary", destroyMethod = "")
-	@ConfigurationProperties(prefix = "spring.datasource.primary")
 	public DataSource datasourcePrimary() {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
 		return dataSourceLookup.getDataSource(jndiPrimary().getJndiName());
@@ -51,7 +50,6 @@ public class DatasourceConfig {
 	}
   
 	@Bean(name = "datasourceSecondary",destroyMethod = "")
-	@ConfigurationProperties(prefix = "spring.datasource.secondary")
 	public DataSource datasourceSecondary() {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
 		return dataSourceLookup.getDataSource(jndiSecondary().getJndiName());
