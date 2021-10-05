@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
 import com.datasource.multiconnect.repository.EmployeeRepository;
+import com.datasource.multiconnect.repository.RetailerRepository;
 import com.datasource.multiconnect.repository.StudentRepository;
 
 @Configuration
@@ -65,6 +66,32 @@ public class DatasourceConfig {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
 	
+	
+	// Tertiary DataSource
+	
+	@Bean
+	@ConfigurationProperties(prefix = "spring.datasource.tertiary")
+	public JndiPropertyHolder jndiTertiary() {
+		return new JndiPropertyHolder();
+	}
+	
+	@Bean(name = "datasourceTertiary", destroyMethod = "")
+	public DataSource datasourceTertiary() {
+		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+		return dataSourceLookup.getDataSource(jndiTertiary().getJndiName());
+	}
+	
+	@Bean(name = "sqlSessionFactoryTertiary")
+	public SqlSessionFactory sessionFactoryTertiary(@Qualifier("datasourceTertiary") DataSource dataSource) {
+		return getSessionFactory(dataSource);
+	}
+	
+	@Bean(name = "sqlSessionTemplateTertiary")
+	public SqlSessionTemplate sessionTemplateTertiary(@Qualifier("sqlSessionFactoryTertiary") SqlSessionFactory sqlSessionFactory) {
+		return new SqlSessionTemplate(sqlSessionFactory);
+	}
+ 	
+	
 	private SqlSessionFactory getSessionFactory(DataSource dataSource) {
 		SqlSessionFactoryBean bean=new SqlSessionFactoryBean();
 		bean.setDataSource(dataSource);
@@ -73,6 +100,7 @@ public class DatasourceConfig {
 			sqlSessionFactory=bean.getObject();
 			sqlSessionFactory.getConfiguration().addMapper(EmployeeRepository.class);
 			sqlSessionFactory.getConfiguration().addMapper(StudentRepository.class);
+			sqlSessionFactory.getConfiguration().addMapper(RetailerRepository.class);
 			return sqlSessionFactory;
 			
 		} catch (Exception e) {
