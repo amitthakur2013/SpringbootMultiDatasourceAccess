@@ -1,9 +1,5 @@
 package com.datasource.multiconnect.config;
 
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;

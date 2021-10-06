@@ -29,6 +29,12 @@ public class MultipleDaoService {
 		return mapper.findAll();
 	}
 	
+	public void addEmployee(String datasourceName,Employee emp) {
+		EmployeeRepository mapper=getSqlSessionTemplate(datasourceName).getMapper(EmployeeRepository.class);
+		mapper.insert(emp);
+		
+	}
+	
 	public List<Student> getAllStudents(String datasourceName) {
 		StudentRepository mapper=getSqlSessionTemplate(datasourceName).getMapper(StudentRepository.class);
 		return mapper.findAllStudents();
