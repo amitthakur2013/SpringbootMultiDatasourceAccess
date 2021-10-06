@@ -1,5 +1,9 @@
 package com.datasource.multiconnect.config;
 
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -9,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
 import com.datasource.multiconnect.repository.EmployeeRepository;
@@ -16,6 +21,7 @@ import com.datasource.multiconnect.repository.RetailerRepository;
 import com.datasource.multiconnect.repository.StudentRepository;
 
 @Configuration
+@Profile("prod")
 public class DatasourceConfig {
 
 	// Primary DataSource
@@ -27,7 +33,8 @@ public class DatasourceConfig {
 	}
 	
 	@Bean(name = "datasourcePrimary", destroyMethod = "")
-	public DataSource datasourcePrimary() {
+	@ConfigurationProperties(prefix = "spring.datasource.primary")
+	public DataSource datasourcePrimary()throws Exception {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
 		return dataSourceLookup.getDataSource(jndiPrimary().getJndiName());
 	}
@@ -51,6 +58,7 @@ public class DatasourceConfig {
 	}
   
 	@Bean(name = "datasourceSecondary",destroyMethod = "")
+	@ConfigurationProperties(prefix = "spring.datasource.secondary")
 	public DataSource datasourceSecondary() {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
 		return dataSourceLookup.getDataSource(jndiSecondary().getJndiName());
@@ -76,6 +84,7 @@ public class DatasourceConfig {
 	}
 	
 	@Bean(name = "datasourceTertiary", destroyMethod = "")
+	@ConfigurationProperties(prefix = "spring.datasource.tertiary")
 	public DataSource datasourceTertiary() {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
 		return dataSourceLookup.getDataSource(jndiTertiary().getJndiName());
