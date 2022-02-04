@@ -24,6 +24,8 @@ public class MultipleDaoService {
 		return (SqlSessionTemplate) applicationContext.getBean("sqlSessionTemplate"+datasourceName);
 	}
 	
+	// Database Primary
+	
 	public List<Employee> getAllEmployees(String datasourceName) {
 		EmployeeRepository mapper=getSqlSessionTemplate(datasourceName).getMapper(EmployeeRepository.class);
 		return mapper.findAll();
@@ -35,10 +37,14 @@ public class MultipleDaoService {
 		
 	}
 	
+	// Database Secondary
+	
 	public List<Student> getAllStudents(String datasourceName) {
 		StudentRepository mapper=getSqlSessionTemplate(datasourceName).getMapper(StudentRepository.class);
 		return mapper.findAllStudents();
 	}
+	
+	// Database Tertiary
 	
 	public List<Retailer> getAllRetailers(String datasourceName) {
 		RetailerRepository mapper = getSqlSessionTemplate(datasourceName).getMapper(RetailerRepository.class);

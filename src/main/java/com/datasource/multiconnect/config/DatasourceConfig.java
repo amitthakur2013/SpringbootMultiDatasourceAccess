@@ -1,5 +1,7 @@
 package com.datasource.multiconnect.config;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
+import com.datasource.multiconnect.model.Employee;
 import com.datasource.multiconnect.repository.EmployeeRepository;
 import com.datasource.multiconnect.repository.RetailerRepository;
 import com.datasource.multiconnect.repository.StudentRepository;
@@ -37,7 +40,7 @@ public class DatasourceConfig {
 	
 	@Bean(name = "sqlSessionFactoryPrimary")
 	public SqlSessionFactory sessionFactoryPrimary(@Qualifier("datasourcePrimary") DataSource dataSource) {
-		return getSessionFactory(dataSource);
+		return getSessionFactory(dataSource,EmployeeRepository.class);
 	}
 	
 	@Bean(name = "sqlSessionTemplatePrimary")
@@ -62,7 +65,7 @@ public class DatasourceConfig {
   
 	@Bean(name = "sqlSessionFactorySecondary")
 	public SqlSessionFactory sessionFactorySecondary(@Qualifier("datasourceSecondary") DataSource dataSource) {
-		return getSessionFactory(dataSource);
+		return getSessionFactory(dataSource,StudentRepository.class);
 	}
   
 	@Bean(name = "sqlSessionTemplateSecondary")
@@ -88,7 +91,7 @@ public class DatasourceConfig {
 	
 	@Bean(name = "sqlSessionFactoryTertiary")
 	public SqlSessionFactory sessionFactoryTertiary(@Qualifier("datasourceTertiary") DataSource dataSource) {
-		return getSessionFactory(dataSource);
+		return getSessionFactory(dataSource,RetailerRepository.class);
 	}
 	
 	@Bean(name = "sqlSessionTemplateTertiary")
@@ -97,15 +100,13 @@ public class DatasourceConfig {
 	}
  	
 	
-	private SqlSessionFactory getSessionFactory(DataSource dataSource) {
+	private SqlSessionFactory getSessionFactory(DataSource dataSource, Class<?> type) {
 		SqlSessionFactoryBean bean=new SqlSessionFactoryBean();
 		bean.setDataSource(dataSource);
 		SqlSessionFactory sqlSessionFactory;
 		try {
 			sqlSessionFactory=bean.getObject();
-			sqlSessionFactory.getConfiguration().addMapper(EmployeeRepository.class);
-			sqlSessionFactory.getConfiguration().addMapper(StudentRepository.class);
-			sqlSessionFactory.getConfiguration().addMapper(RetailerRepository.class);
+			sqlSessionFactory.getConfiguration().addMapper(type);
 			return sqlSessionFactory;
 			
 		} catch (Exception e) {
